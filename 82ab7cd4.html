@@ -1,0 +1,863 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/2X.webp">
+  <link rel="icon" href="/img/2X.webp">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="noionion">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（实验五 输入）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rust写个操作系统——课程实验blogos移至armV8深度解析：实验五 输入">
+<meta property="og:url" content="https://noionion.top/82ab7cd4.html">
+<meta property="og:site_name" content="贰猹の小窝">
+<meta property="og:description" content="HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（实验五 输入）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://noionion-picture-bed.oss-cn-hangzhou.aliyuncs.com/blogos-armv8/timer2s.png">
+<meta property="og:image" content="https://noionion-picture-bed.oss-cn-hangzhou.aliyuncs.com/blogos-armv8/uart.png">
+<meta property="og:image" content="https://noionion-picture-bed.oss-cn-hangzhou.aliyuncs.com/blogos-armv8/uartOK.png">
+<meta property="article:published_time" content="2022-04-25T12:01:00.000Z">
+<meta property="article:modified_time" content="2022-05-21T13:19:00.000Z">
+<meta property="article:author" content="noionion">
+<meta property="article:tag" content="Course">
+<meta property="article:tag" content="os">
+<meta property="article:tag" content="rust">
+<meta property="article:tag" content="blogos">
+<meta property="article:tag" content="armv8">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://noionion-picture-bed.oss-cn-hangzhou.aliyuncs.com/blogos-armv8/timer2s.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>rust写个操作系统——课程实验blogos移至armV8深度解析：实验五 输入 - 贰猹の小窝</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"noionion.top","root":"/","version":"1.9.0","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":1},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="贰猹の小窝" type="application/atom+xml">
+<link rel="alternate" href="/rss.xml" title="贰猹の小窝" type="application/rss+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>贰猹の小窝</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="rust写个操作系统——课程实验blogos移至armV8深度解析：实验五 输入"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        noionion
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-04-25 20:01" pubdate>
+          2022年4月25日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          101 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">rust写个操作系统——课程实验blogos移至armV8深度解析：实验五 输入</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：1 小时前
+                  
+                
+              </p>
+            
+            <div class="markdown-body">
+              
+              <div class="note note-info">
+            <blockquote><p>你将在每个实验对应分支上都看到这句话，确保作者实验代码在被下载后，能在正确的环境中运行。</p></blockquote><p>运行环境请参考: <a href="https://noionion.top/adfdff.html">lab1 环境搭建</a></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">cargo build<br>qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/blogos_armv8 -semihosting<br></code></pre></td></tr></table></figure>
+          </div>
+
+<h2 id="实验五-输入"><a href="#实验五-输入" class="headerlink" title="实验五 输入"></a>实验五 输入</h2><p>QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU使用 -nographic 参数（disable graphical output and redirect serial I&#x2F;Os to console）时QEMU会将串口重定向到控制台，因此我们可以使用UART作为输入设备。</p>
+<p>同时这次实验也将顺便完成上一节没有完成的异常回调处理，我们将作对时钟中断和硬件中断的不同处理。</p>
+<hr>
+<h3 id="实验目的"><a href="#实验目的" class="headerlink" title="实验目的"></a>实验目的</h3><p>实验指导书中这节就没有写实验目的了。我大致把目的划分如下：</p>
+<ol>
+<li><p>完成实验四未完成的时钟中断处理回调</p>
+</li>
+<li><p>完成pl011（UART）异步串行接口的驱动编写</p>
+</li>
+<li><p>完成串口输入中断</p>
+</li>
+</ol>
+<hr>
+<h3 id="时钟中断回调函数实现"><a href="#时钟中断回调函数实现" class="headerlink" title="时钟中断回调函数实现"></a>时钟中断回调函数实现</h3><p>在上一个实验中，我们实现了时间中断，但没有对引发的时间中断做处理回调。我们先扫尾，然后再来处理输入中断。</p>
+<p>我们知道，时间中断后引发的异常是<code>el1_irq</code>类中断，所以我们所需修改的是<code>src/interrupts.rs</code>文件中关于<code>el1_irq</code>的回调函数。原函数如下：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-meta">#[no_mangle]</span><br><span class="hljs-keyword">unsafe</span> <span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">el1_irq</span>(ctx: &amp;<span class="hljs-keyword">mut</span> ExceptionCtx) &#123;<br>    <span class="hljs-title function_ invoke__">catch</span>(ctx, EL1_IRQ);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们需要的是实现对时钟的中断进行准确的分辨，所以我们需要在该异常被处发后，读取中断号并作相应处理。</p>
+<p>当定时器触发时间中断后，中断控制器的<code>GICC_IAR</code>寄存器将被写入中断号<code>30</code>。结合上节的GICC寄存器表，我们在GICC寄存器处新增两个需要调用的寄存器地址映射，定义如下：</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs diff">  //GICC寄存器基址<br>  const GICD_BASE: u64 = 0x08010000;<br><br>  //GICC实验所需寄存器<br>  const GICC_CTLR: *mut u32 = (GICC_BASE + 0x0) as *mut u32;<br>  const GICC_PMR: *mut u32 = (GICC_BASE + 0x0004) as *mut u32;<br>  const GICC_BPR: *mut u32 = (GICC_BASE + 0x0008) as *mut u32;<br><span class="hljs-addition">+ const GICC_IAR: *mut u32 = (GICC_BASE + 0x0c) as *mut u32;</span><br><span class="hljs-addition">+ const GICC_EOIR: *mut u32 = (GICC_BASE + 0x10) as *mut u32;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>GICC_IAR</code>寄存器中存放的是当前的中断号。例如当时间中断发生时，寄存器中将写入中断号<code>30</code>（前5位）和对应的内核编号（后三位），我们可以通过读取该寄存器中的值来做中断号识别</p>
+</li>
+<li><p><code>GICC_EOIR</code>寄存器则用于标记某一中断被完成，即中断处理结束的信号。这个信号告诉控制器：中断已经被处理，并且系统已经准备好接收下一个中断。</p>
+</li>
+</ul>
+<p>基于以上，我们可以根据<a target="_blank" rel="noopener" href="https://documentation-service.arm.com/static/5f8ff196f86e16515cdbf969?token=">GIC手册</a>修改<code>el1_irq</code>处理回调函数，修改如下：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-meta">#[no_mangle]</span><br><span class="hljs-keyword">unsafe</span> <span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">el1_irq</span>(ctx: &amp;<span class="hljs-keyword">mut</span> ExceptionCtx) &#123;<br>    <span class="hljs-comment">// 中断确认（读取中断号和中断对应核）</span><br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">value</span>: <span class="hljs-type">u32</span> = ptr::<span class="hljs-title function_ invoke__">read_volatile</span>(GICC_IAR);<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">irq_num</span>: <span class="hljs-type">u32</span> = value &amp; <span class="hljs-number">0x1ff</span>;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">core_num</span>: <span class="hljs-type">u32</span> = value &amp; <span class="hljs-number">0xe00</span>;<br><br>    <span class="hljs-comment">// 实际处理中断</span><br>    <span class="hljs-title function_ invoke__">handle_irq_lines</span>(ctx, core_num, irq_num);<br><br>    <span class="hljs-comment">// 中断完成标记信号</span><br>    ptr::<span class="hljs-title function_ invoke__">write_volatile</span>(GICC_EOIR, core_num | irq_num);<br><br>    <span class="hljs-comment">// 清除相应中断位</span><br>    <span class="hljs-title function_ invoke__">clear</span>(irq_num);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>并编写中断处理函数<code>handle_irq_lines</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">handle_irq_lines</span>(ctx: &amp;<span class="hljs-keyword">mut</span> ExceptionCtx, _core_num: <span class="hljs-type">u32</span>, irq_num: <span class="hljs-type">u32</span>) &#123;<br>    <span class="hljs-keyword">if</span> irq_num == TIMER_IRQ &#123;       <span class="hljs-comment">// 确认时间中断</span><br>        <span class="hljs-title function_ invoke__">handle_timer_irq</span>(ctx);<br>    &#125; <span class="hljs-keyword">else</span>&#123;<br>        <span class="hljs-title function_ invoke__">catch</span>(ctx, EL1_IRQ);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 时间中断对应处理函数</span><br><span class="hljs-keyword">fn</span> <span class="hljs-title function_">handle_timer_irq</span>(_ctx: &amp;<span class="hljs-keyword">mut</span> ExceptionCtx)&#123;<br><br>    crate::<span class="hljs-built_in">print!</span>(<span class="hljs-string">&quot;.&quot;</span>);     <span class="hljs-comment">//我们令其每发生一次中断就打点一次，更直观的体现出发生时间中断</span><br><br>    <span class="hljs-comment">// 重置定时器，使其再过2秒产生一次中断</span><br>    <span class="hljs-keyword">unsafe</span> &#123;<br>        asm!(<span class="hljs-string">&quot;mrs x1, CNTFRQ_EL0&quot;</span>);<br>        asm!(<span class="hljs-string">&quot;add x1, x1, x1&quot;</span>);<br>        asm!(<span class="hljs-string">&quot;msr CNTP_TVAL_EL0, x1&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>大致的流程还是很好理解的，我们编译运行后看看效果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">cargo build<br>qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/blogos_armv8<br></code></pre></td></tr></table></figure>
+
+<p>效果如下（每两秒将会有一次打点）：</p>
+<p><img src="https://noionion-picture-bed.oss-cn-hangzhou.aliyuncs.com/blogos-armv8/timer2s.png" srcset="/img/loading.gif" lazyload alt="2s打点"></p>
+<p>循环打点一方面是定时的功劳，另一方面是主函数中循环将系统置于低电平状态后的结果。每一次的中断处理后，系统将重新回到高电平运行状态。如果我们不采用<code>loop</code>轮询，将只会发生一次打点，此后及时重新到达定时器时间并发送了时钟中断，GIC也不会进行处理（因为设置的是低电平触发）。</p>
+<h3 id="pl011（UART）异步串行接口驱动编写"><a href="#pl011（UART）异步串行接口驱动编写" class="headerlink" title="pl011（UART）异步串行接口驱动编写"></a>pl011（UART）异步串行接口驱动编写</h3><p>QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU使用<code>-nographic</code>参数（disable graphical output and redirect serial I&#x2F;Os to console）时QEMU会将串口重定向到控制台，因此我们可以使用UART作为输入设备。</p>
+<p>通用异步收发传输器（Universal Asynchronous Receiver&#x2F;Transmitter)，通常称作UART。它将要传输的资料在串行通信与并行通信之间加以转换。作为把并行输入信号转成串行输出信号的芯片，UART通常被集成于其他通讯接口的连结上。</p>
+<p>UART作为异步串口通信协议的一种，工作原理是将传输数据的每个字符一位接一位地传输。我们在控制台中的输入，也会被它传输到qemu中。</p>
+<h4 id="tock-registers"><a href="#tock-registers" class="headerlink" title="tock-registers"></a>tock-registers</h4><p>在实验四中，针对GICD，GICC，TIMER等硬件我们定义了大量的常量和寄存器值，这在使用时过于繁琐也容易出错。于是我们决定使用<code>tock-registers</code>库。</p>
+<p><code>tock-registers</code>提供了一些接口用于更好的定义寄存器。官方说明如下：</p>
+<blockquote>
+<p>The crate provides three types for working with memory mapped registers: <code>ReadWrite</code>, <code>ReadOnly</code>, and <code>WriteOnly</code>, providing read-write, read-only, and write-only functionality, respectively. These types implement the <code>Readable</code>, <code>Writeable</code> and <code>ReadWriteable</code>  traits.</p>
+<p>Defining the registers is done with the <code>register_structs</code> macro, which expects for each register an offset, a field name, and a type. Registers must be declared in increasing order of offsets and contiguously. Gaps when defining the registers must be explicitly annotated with an offset and gap identifier (by convention using a field named <code>_reservedN</code>), but without a type. The macro will then automatically take care of calculating the gap size and inserting a suitable filler struct. The end of the struct is marked with its size and the <code>@END</code> keyword, effectively pointing to the offset immediately past the list of registers.</p>
+</blockquote>
+<p>翻译如下：</p>
+<blockquote>
+<p>tock-registers 提供了三种类型的内存映射寄存器：ReadWrite、ReadOnly和WriteOnly，分别提供读写、只读和只读功能。这些类型实现了可读、可写和可读写特性。</p>
+<p>寄存器的定义是通过<code>register_structs</code>宏完成的，该宏要求每个寄存器有一个偏移量、一个字段名和一个类型。寄存器必须按偏移量的递增顺序和连续顺序声明。定义寄存器时，必须使用偏移量和间隙标识符（按照惯例，使用名为_reservedN的字段）显式注释间隙，但不使用类型。然后，宏将自动计算间隙大小并插入合适的填充结构。结构的末尾用大小和@end关键字标记，有效地指向寄存器列表后面的偏移量。</p>
+</blockquote>
+<p>根据官方的说明<a target="_blank" rel="noopener" href="https://docs.rs/tock-registers/latest/tock_registers/">tock_registers</a>作为一个示例，我们来实现<code>pl011</code>串口驱动。</p>
+<p>阅读设备树关于<code>pl011</code>部分内容（实验二）：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-title class_">pl011@9000000</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">clock-names</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;uartclk\0apb_pclk&quot;</span><span class="hljs-punctuation">;</span><br>    <span class="hljs-attr">clocks</span> <span class="hljs-operator">=</span> <span class="hljs-params">&lt;<span class="hljs-number">0x8000</span> <span class="hljs-number">0x8000</span>&gt;</span><span class="hljs-punctuation">;</span><br>    <span class="hljs-attr">interrupts</span> <span class="hljs-operator">=</span> <span class="hljs-params">&lt;<span class="hljs-number">0x00</span> <span class="hljs-number">0x01</span> <span class="hljs-number">0x04</span>&gt;</span><span class="hljs-punctuation">;</span><br>    <span class="hljs-attr">reg</span> <span class="hljs-operator">=</span> <span class="hljs-params">&lt;<span class="hljs-number">0x00</span> <span class="hljs-number">0x9000000</span> <span class="hljs-number">0x00</span> <span class="hljs-number">0x1000</span>&gt;</span><span class="hljs-punctuation">;</span><br>    <span class="hljs-attr">compatible</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;arm,pl011\0arm,primecell&quot;</span><span class="hljs-punctuation">;</span><br><span class="hljs-punctuation">&#125;;</span><br><br><span class="hljs-title class_">chosen</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">stdout-path</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;/pl011@9000000&quot;</span><span class="hljs-punctuation">;</span><br>    <span class="hljs-attr">kaslr-seed</span> <span class="hljs-operator">=</span> <span class="hljs-params">&lt;<span class="hljs-number">0xcbd0568d</span> <span class="hljs-number">0xb463306c</span>&gt;</span><span class="hljs-punctuation">;</span><br><span class="hljs-punctuation">&#125;;</span><br></code></pre></td></tr></table></figure>
+
+<p>由上可以看出，virt机器包含有pl011的设备，该设备的寄存器在<code>0x9000000</code>开始处。pl011实际上是一个UART设备，即串口。可以看到virt选择使用pl011作为标准输出，这是因为与PC不同，大部分嵌入式系统默认情况下并不包含VGA设备。</p>
+<p>而<a target="_blank" rel="noopener" href="https://developer.arm.com/documentation/ddi0183/g/programmers-model/summary-of-registers?lang=en">uart寄存器表</a>也列出了UART相关的寄存器如下图所示：</p>
+<p><img src="https://noionion-picture-bed.oss-cn-hangzhou.aliyuncs.com/blogos-armv8/uart.png" srcset="/img/loading.gif" lazyload alt="uart"></p>
+<p>我们可以开始定义<code>pl011</code>驱动文件了。原则上来讲这部分内容应当定义在<code>src/uart_console.rs</code>中。但为了避免代码过长，我们选择重构<code>uart_console.rs</code>。</p>
+<p>首先创建<code>src/uart_console</code>目录，并将原<code>uart_console.rs</code>更名为<code>mod.rs</code>，且置于<code>src/uart_console</code>目录下， 最后新建<code>src/uart_console/pl011.rs</code>文件。目录结构看起来像这样：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">.<br>|<span class="hljs-string">____Cargo.toml</span><br><span class="hljs-string"></span>|<span class="hljs-string">____Cargo.lock</span><br><span class="hljs-string"></span>|<span class="hljs-string">____.cargo</span><br><span class="hljs-string"></span>|<span class="hljs-string"> </span>|<span class="hljs-string">____config.toml</span><br><span class="hljs-string"></span>|<span class="hljs-string">____aarch64-qemu.ld</span><br><span class="hljs-string"></span>|<span class="hljs-string">____.vscode</span><br><span class="hljs-string"></span>|<span class="hljs-string"> </span>|<span class="hljs-string">____launch.json</span><br><span class="hljs-string"></span>|<span class="hljs-string">____aarch64-unknown-none-softfloat.json</span><br><span class="hljs-string"></span>|____src<br>|<span class="hljs-string"> </span>|<span class="hljs-string">____panic.rs</span><br><span class="hljs-string"></span>|<span class="hljs-string"> </span>|<span class="hljs-string">____start.s</span><br><span class="hljs-string"></span>|<span class="hljs-string"> </span>|<span class="hljs-string">____interrupts.rs</span><br><span class="hljs-string"></span>|<span class="hljs-string"> </span>|<span class="hljs-string">____main.rs</span><br><span class="hljs-string"></span>|<span class="hljs-string"> </span>|____uart_console<br>|<span class="hljs-string"> </span>|<span class="hljs-string"> </span>|<span class="hljs-string">____mod.rs</span><br><span class="hljs-string"></span>|<span class="hljs-string"> </span>|<span class="hljs-string"> </span>|<span class="hljs-string">____pl011.rs</span><br><span class="hljs-string"></span>|<span class="hljs-string"> </span>|<span class="hljs-string">____exception.s</span><br></code></pre></td></tr></table></figure>
+
+<p>我们先需要在<code>Cargo.toml</code>中的<code>[dependencies]</code>节中加入依赖（这里实验指导书有误）：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs toml"><span class="hljs-section">[dependencies]</span><br><span class="hljs-attr">tock-registers</span> = <span class="hljs-string">&quot;0.7.0&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="驱动编写"><a href="#驱动编写" class="headerlink" title="驱动编写"></a>驱动编写</h4><p>根据上述<code>tock_registers</code>官方说明和寄存器表，我们修改<code>src/uart_console/pl011.rs</code>如下：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">use</span> tock_registers::&#123;registers::&#123;ReadOnly, ReadWrite, WriteOnly&#125;, register_bitfields, register_structs&#125;;<br><br><span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> PL011REGS: *<span class="hljs-keyword">mut</span> PL011Regs = (<span class="hljs-number">0x0900_0000</span>) <span class="hljs-keyword">as</span> *<span class="hljs-keyword">mut</span> PL011Regs;<br><br>register_bitfields![<br>    <span class="hljs-type">u32</span>,<br><br>    <span class="hljs-keyword">pub</span> UARTDR [<br>        DATA <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">0</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">8</span>) []<br>    ],<br>    <span class="hljs-comment">/// Flag Register</span><br>    <span class="hljs-keyword">pub</span> UARTFR [<br>        <span class="hljs-comment">/// Transmit FIFO full. The meaning of this bit depends on the</span><br>        <span class="hljs-comment">/// state of the FEN bit in the UARTLCR_ LCRH Register. If the</span><br>        <span class="hljs-comment">/// FIFO is disabled, this bit is set when the transmit</span><br>        <span class="hljs-comment">/// holding register is full. If the FIFO is enabled, the TXFF</span><br>        <span class="hljs-comment">/// bit is set when the transmit FIFO is full.</span><br>        TXFF <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">6</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">1</span>) [],<br><br>        <span class="hljs-comment">/// Receive FIFO empty. The meaning of this bit depends on the</span><br>        <span class="hljs-comment">/// state of the FEN bit in the UARTLCR_H Register. If the</span><br>        <span class="hljs-comment">/// FIFO is disabled, this bit is set when the receive holding</span><br>        <span class="hljs-comment">/// register is empty. If the FIFO is enabled, the RXFE bit is</span><br>        <span class="hljs-comment">/// set when the receive FIFO is empty.</span><br>        RXFE <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">4</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">1</span>) []<br>    ],<br><br>    <span class="hljs-comment">/// Integer Baud rate divisor</span><br>    <span class="hljs-keyword">pub</span> UARTIBRD [<br>        <span class="hljs-comment">/// Integer Baud rate divisor</span><br>        IBRD <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">0</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">16</span>) []<br>    ],<br><br>    <span class="hljs-comment">/// Fractional Baud rate divisor</span><br>    <span class="hljs-keyword">pub</span> UARTFBRD [<br>        <span class="hljs-comment">/// Fractional Baud rate divisor</span><br>        FBRD <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">0</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">6</span>) []<br>    ],<br><br>    <span class="hljs-comment">/// Line Control register</span><br>    <span class="hljs-keyword">pub</span> UARTLCR_H [<br>        <span class="hljs-comment">/// Parity enable. If this bit is set to 1, parity checking and generation</span><br>        <span class="hljs-comment">/// is enabled, else parity is disabled and no parity bit added to the data frame.</span><br>        PEN <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">1</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">1</span>) [<br>            Disabled = <span class="hljs-number">0</span>,<br>            Enabled = <span class="hljs-number">1</span><br>        ],<br>        <span class="hljs-comment">/// Two stop bits select. If this bit is set to 1, two stop bits are transmitted</span><br>        <span class="hljs-comment">/// at the end of the frame.</span><br>        STP2 <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">3</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">1</span>) [<br>            Stop1 = <span class="hljs-number">0</span>,<br>            Stop2 = <span class="hljs-number">1</span><br>        ],<br>        <span class="hljs-comment">/// Enable FIFOs.</span><br>        FEN <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">4</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">1</span>) [<br>            Disabled = <span class="hljs-number">0</span>,<br>            Enabled = <span class="hljs-number">1</span><br>        ],<br><br>        <span class="hljs-comment">/// Word length. These bits indicate the number of data bits</span><br>        <span class="hljs-comment">/// transmitted or received in a frame.</span><br>        WLEN <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">5</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">2</span>) [<br>            FiveBit = <span class="hljs-number">0b00</span>,<br>            SixBit = <span class="hljs-number">0b01</span>,<br>            SevenBit = <span class="hljs-number">0b10</span>,<br>            EightBit = <span class="hljs-number">0b11</span><br>        ]<br>    ],<br><br>    <span class="hljs-comment">/// Control Register</span><br>    <span class="hljs-keyword">pub</span> UARTCR [<br>        <span class="hljs-comment">/// Receive enable. If this bit is set to 1, the receive</span><br>        <span class="hljs-comment">/// section of the UART is enabled. Data reception occurs for</span><br>        <span class="hljs-comment">/// UART signals. When the UART is disabled in the middle of</span><br>        <span class="hljs-comment">/// reception, it completes the current character before</span><br>        <span class="hljs-comment">/// stopping.</span><br>        RXE    <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">9</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">1</span>) [<br>            Disabled = <span class="hljs-number">0</span>,<br>            Enabled = <span class="hljs-number">1</span><br>        ],<br><br>        <span class="hljs-comment">/// Transmit enable. If this bit is set to 1, the transmit</span><br>        <span class="hljs-comment">/// section of the UART is enabled. Data transmission occurs</span><br>        <span class="hljs-comment">/// for UART signals. When the UART is disabled in the middle</span><br>        <span class="hljs-comment">/// of transmission, it completes the current character before</span><br>        <span class="hljs-comment">/// stopping.</span><br>        TXE    <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">8</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">1</span>) [<br>            Disabled = <span class="hljs-number">0</span>,<br>            Enabled = <span class="hljs-number">1</span><br>        ],<br><br>        <span class="hljs-comment">/// UART enable</span><br>        UARTEN <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">0</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">1</span>) [<br>            <span class="hljs-comment">/// If the UART is disabled in the middle of transmission</span><br>            <span class="hljs-comment">/// or reception, it completes the current character</span><br>            <span class="hljs-comment">/// before stopping.</span><br>            Disabled = <span class="hljs-number">0</span>,<br>            Enabled = <span class="hljs-number">1</span><br>        ]<br>    ],<br><br>    <span class="hljs-keyword">pub</span> UARTIMSC [<br>        RXIM <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">4</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">1</span>) [<br>            Disabled = <span class="hljs-number">0</span>,<br>            Enabled = <span class="hljs-number">1</span><br>        ]<br>    ],<br>    <span class="hljs-comment">/// Interupt Clear Register</span><br>    <span class="hljs-keyword">pub</span> UARTICR [<br>        <span class="hljs-comment">/// Meta field for all pending interrupts</span><br>        ALL <span class="hljs-title function_ invoke__">OFFSET</span>(<span class="hljs-number">0</span>) <span class="hljs-title function_ invoke__">NUMBITS</span>(<span class="hljs-number">11</span>) [<br>            Clear = <span class="hljs-number">0x7ff</span><br>        ]<br>    ]<br>];<br></code></pre></td></tr></table></figure>
+
+<p>这里对以上读写内容也不再细讲。只需要知道的是<code>pl011</code>的设备基址位于<code>0x0900_0000</code>(第二行代码），然后根据寄存器表定义我们需要的寄存器：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs rust">register_structs! &#123;<br>    <span class="hljs-keyword">pub</span> PL011Regs &#123;<br>        (<span class="hljs-number">0x00</span> =&gt; <span class="hljs-keyword">pub</span> dr: ReadWrite&lt;<span class="hljs-type">u32</span>, UARTDR::Register&gt;),                   <span class="hljs-comment">// 0x00</span><br>        (<span class="hljs-number">0x04</span> =&gt; __reserved_0),               <span class="hljs-comment">// 0x04</span><br>        (<span class="hljs-number">0x18</span> =&gt; <span class="hljs-keyword">pub</span> fr: ReadOnly&lt;<span class="hljs-type">u32</span>, UARTFR::Register&gt;),      <span class="hljs-comment">// 0x18</span><br>        (<span class="hljs-number">0x1c</span> =&gt; __reserved_1),               <span class="hljs-comment">// 0x1c</span><br>        (<span class="hljs-number">0x24</span> =&gt; <span class="hljs-keyword">pub</span> ibrd: WriteOnly&lt;<span class="hljs-type">u32</span>, UARTIBRD::Register&gt;), <span class="hljs-comment">// 0x24</span><br>        (<span class="hljs-number">0x28</span> =&gt; <span class="hljs-keyword">pub</span> fbrd: WriteOnly&lt;<span class="hljs-type">u32</span>, UARTFBRD::Register&gt;), <span class="hljs-comment">// 0x28</span><br>        (<span class="hljs-number">0x2C</span> =&gt; <span class="hljs-keyword">pub</span> lcr_h: WriteOnly&lt;<span class="hljs-type">u32</span>, UARTLCR_H::Register&gt;), <span class="hljs-comment">// 0x2C</span><br>        (<span class="hljs-number">0x30</span> =&gt; <span class="hljs-keyword">pub</span> cr: WriteOnly&lt;<span class="hljs-type">u32</span>, UARTCR::Register&gt;),     <span class="hljs-comment">// 0x30</span><br>        (<span class="hljs-number">0x34</span> =&gt; __reserved_2),               <span class="hljs-comment">// 0x34</span><br>        (<span class="hljs-number">0x38</span> =&gt; <span class="hljs-keyword">pub</span> imsc: ReadWrite&lt;<span class="hljs-type">u32</span>, UARTIMSC::Register&gt;), <span class="hljs-comment">// 0x38</span><br>        (<span class="hljs-number">0x44</span> =&gt; <span class="hljs-keyword">pub</span> icr: WriteOnly&lt;<span class="hljs-type">u32</span>, UARTICR::Register&gt;),   <span class="hljs-comment">// 0x44</span><br>        (<span class="hljs-number">0x48</span> =&gt; @END),<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这看起来好像比实验四中对应的寄存器描述部分要复杂，但如果你熟悉了之后，基本上可以依据技术参考手册中的寄存器描述无脑写了。（很多部分可以无脑抄）</p>
+<p>然后我们在<code>src/uart_console/mod.rs</code>中引入<code>pl011.rs</code>，并修改<code>write_byte</code>。</p>
+<p>我们在前面对输出是直接定义寄存器常量的</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">write_byte</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, byte: <span class="hljs-type">u8</span>) &#123;<br>        <span class="hljs-keyword">const</span> UART0: *<span class="hljs-keyword">mut</span> <span class="hljs-type">u8</span> = <span class="hljs-number">0x0900_0000</span> <span class="hljs-keyword">as</span> *<span class="hljs-keyword">mut</span> <span class="hljs-type">u8</span>;<br>        <span class="hljs-keyword">unsafe</span> &#123;<br>            ptr::<span class="hljs-title function_ invoke__">write_volatile</span>(UART0, byte);<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>而现在我们已经定义好了<code>UART</code>的寄存器表，可以选择直接调用<code>pl011.rs</code>中定义的寄存器：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">use</span> tock_registers::&#123;interfaces::Writeable&#125;;<br><br><span class="hljs-keyword">pub</span> <span class="hljs-keyword">mod</span> pl011;<br><span class="hljs-keyword">use</span> pl011::*;<br><br><span class="hljs-keyword">pub</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">write_byte</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, byte: <span class="hljs-type">u8</span>) &#123;<br>    <span class="hljs-comment">// const UART0: *mut u8 = 0x0900_0000 as *mut u8;</span><br>    <span class="hljs-keyword">unsafe</span> &#123;<br>        <span class="hljs-comment">// pl011 device registers</span><br>        <span class="hljs-keyword">let</span> <span class="hljs-variable">pl011r</span>: &amp;PL011Regs = &amp;*PL011REGS;<br>        <span class="hljs-comment">// ptr::write_volatile(UART0, byte);</span><br>        pl011r.dr.<span class="hljs-title function_ invoke__">write</span>(UARTDR::DATA.<span class="hljs-title function_ invoke__">val</span>(byte <span class="hljs-keyword">as</span> <span class="hljs-type">u32</span>));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>由于我们较为完整的定义好了<code>pl011</code>寄存器组，每次调用都需要一次初始化行为。故我们还需要为<code>Writer</code>结构实现构造函数，并修改<code>WRITER</code>宏的定义：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-comment">//往串口寄存器写入字节和字符串进行输出</span><br><span class="hljs-keyword">impl</span> <span class="hljs-title class_">Writer</span> &#123;<br>    <span class="hljs-comment">// ...</span><br><br>    <span class="hljs-keyword">pub</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">new</span>() <span class="hljs-punctuation">-&gt;</span> Writer&#123;<br><br>        <span class="hljs-keyword">unsafe</span> &#123;<br>            <span class="hljs-comment">// pl011 device registers</span><br>            <span class="hljs-keyword">let</span> <span class="hljs-variable">pl011r</span>: &amp;PL011Regs = &amp;*PL011REGS;<br><br>            <span class="hljs-comment">// 禁用pl011</span><br>            pl011r.cr.<span class="hljs-title function_ invoke__">write</span>(UARTCR::TXE::Disabled + UARTCR::RXE::Disabled + UARTCR::UARTEN::Disabled);<br>            <span class="hljs-comment">// 清空中断状态</span><br>            pl011r.icr.<span class="hljs-title function_ invoke__">write</span>(UARTICR::ALL::Clear);<br>            <span class="hljs-comment">// 设定中断mask，需要使能的中断</span><br>            pl011r.imsc.<span class="hljs-title function_ invoke__">write</span>(UARTIMSC::RXIM::Enabled);<br>            <span class="hljs-comment">// IBRD = UART_CLK / (16 * BAUD_RATE)</span><br>            <span class="hljs-comment">// FBRD = ROUND((64 * MOD(UART_CLK,(16 * BAUD_RATE))) / (16 * BAUD_RATE))</span><br>            <span class="hljs-comment">// UART_CLK = 24M</span><br>            <span class="hljs-comment">// BAUD_RATE = 115200</span><br>            pl011r.ibrd.<span class="hljs-title function_ invoke__">write</span>(UARTIBRD::IBRD.<span class="hljs-title function_ invoke__">val</span>(<span class="hljs-number">13</span>));<br>            pl011r.fbrd.<span class="hljs-title function_ invoke__">write</span>(UARTFBRD::FBRD.<span class="hljs-title function_ invoke__">val</span>(<span class="hljs-number">1</span>));<br>            <span class="hljs-comment">// 8N1 FIFO enable</span><br>            pl011r.lcr_h.<span class="hljs-title function_ invoke__">write</span>(UARTLCR_H::WLEN::EightBit + UARTLCR_H::PEN::Disabled + UARTLCR_H::STP2::Stop1<br>                + UARTLCR_H::FEN::Enabled);<br>            <span class="hljs-comment">// enable pl011</span><br>            pl011r.cr.<span class="hljs-title function_ invoke__">write</span>(UARTCR::UARTEN::Enabled + UARTCR::RXE::Enabled + UARTCR::TXE::Enabled);<br>        &#125;<br><br>        Writer<br>    &#125;<br>&#125;<br><br>lazy_static! &#123;<br>    <span class="hljs-keyword">pub</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">ref</span> WRITER: Mutex&lt;Writer&gt; = Mutex::<span class="hljs-title function_ invoke__">new</span>(Writer::<span class="hljs-title function_ invoke__">new</span>());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>最后是将无用的<code>ptr</code>引用去除</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs diff"><span class="hljs-deletion">- use core::&#123;fmt, ptr&#125;;</span><br><span class="hljs-addition">+ use core::fmt;</span><br></code></pre></td></tr></table></figure>
+
+<p>至此，我们完成了所有关于pl011（uart）串口驱动的编写。</p>
+<h3 id="串口输入中断处理回调"><a href="#串口输入中断处理回调" class="headerlink" title="串口输入中断处理回调"></a>串口输入中断处理回调</h3><p>第一节我们讲到了如何去实现timer中断的处理回调。而输入中断也是<code>el1_irq</code>一类的中断。回到我们修改&#x2F;新增的几个函数，我们将中断实际处理部分针对输入中断做一些判断和处理即可。</p>
+<h4 id="输入中断初始化"><a href="#输入中断初始化" class="headerlink" title="输入中断初始化"></a>输入中断初始化</h4><p>同时钟中断一样，我们还是需要对输入中断进行启用和配置。修改<code>src/interrupts.rs</code>，新增如下内容：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-comment">// 串口输入中断号33</span><br><span class="hljs-keyword">const</span> UART0_IRQ: <span class="hljs-type">u32</span> = <span class="hljs-number">33</span>;<br><br><span class="hljs-keyword">pub</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">init_gicv2</span>() &#123;<br>    <span class="hljs-comment">// ...</span><br><br>    <span class="hljs-comment">// 初始化UART0 中断</span><br>    <span class="hljs-comment">// interrupts = &lt;0x00 0x01 0x04&gt;; SPI, 0x01, level</span><br>    <span class="hljs-title function_ invoke__">set_config</span>(UART0_IRQ, ICFGR_LEVEL); <span class="hljs-comment">//电平触发</span><br>    <span class="hljs-title function_ invoke__">set_priority</span>(UART0_IRQ, <span class="hljs-number">0</span>); <span class="hljs-comment">//优先级设定</span><br>    <span class="hljs-title function_ invoke__">clear</span>(UART0_IRQ); <span class="hljs-comment">//清除中断请求</span><br>    <span class="hljs-title function_ invoke__">enable</span>(UART0_IRQ); <span class="hljs-comment">//使能中断</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="输入中断处理回调"><a href="#输入中断处理回调" class="headerlink" title="输入中断处理回调"></a>输入中断处理回调</h4><p>然后对UART的数据接收中断进行处理：修改我们的中断实际处理函数<code>handle_irq_lines</code>为如下，并新增输入中断处理函数<code>handle_uart0_rx_irq</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">handle_irq_lines</span>(ctx: &amp;<span class="hljs-keyword">mut</span> ExceptionCtx, _core_num: <span class="hljs-type">u32</span>, irq_num: <span class="hljs-type">u32</span>) &#123;<br>    <span class="hljs-keyword">if</span> irq_num == TIMER_IRQ &#123;<br>        <span class="hljs-title function_ invoke__">handle_timer_irq</span>(ctx);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> irq_num == UART0_IRQ &#123;<br>        <span class="hljs-title function_ invoke__">handle_uart0_rx_irq</span>(ctx);<br>    &#125; <span class="hljs-keyword">else</span>&#123;<br>        <span class="hljs-title function_ invoke__">catch</span>(ctx, EL1_IRQ);<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">use</span> tock_registers::interfaces::Readable;<br><br><span class="hljs-keyword">fn</span> <span class="hljs-title function_">handle_uart0_rx_irq</span>(_ctx: &amp;<span class="hljs-keyword">mut</span> ExceptionCtx)&#123;<br>    <span class="hljs-keyword">use</span> crate::uart_console::pl011::*;<br>    <span class="hljs-keyword">unsafe</span>&#123;<br>        <span class="hljs-comment">// pl011 device registers</span><br>        <span class="hljs-keyword">let</span> <span class="hljs-variable">pl011r</span>: &amp;PL011Regs = &amp;*PL011REGS;<br><br>        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">flag</span> = pl011r.fr.<span class="hljs-title function_ invoke__">read</span>(UARTFR::RXFE);<br>        <span class="hljs-keyword">while</span> flag != <span class="hljs-number">1</span> &#123;<br>            <span class="hljs-keyword">let</span> <span class="hljs-variable">value</span> = pl011r.dr.<span class="hljs-title function_ invoke__">read</span>(UARTDR::DATA);<br><br>            crate::<span class="hljs-built_in">print!</span>(<span class="hljs-string">&quot;&#123;&#125;&quot;</span>, value <span class="hljs-keyword">as</span> <span class="hljs-type">u8</span> <span class="hljs-keyword">as</span> <span class="hljs-type">char</span>);<br>            flag = pl011r.fr.<span class="hljs-title function_ invoke__">read</span>(UARTFR::RXFE);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>当我们输入一个字符后，uart产生一次输入中断，而输入中断处理函数则将我们输入的字符从寄存器中取出并调用<code>print!</code>宏打印出来。</p>
+<p>由此我们完成了输入中断的处理。我们进行代码的构建并运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">cargo build<br>qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/blogos_armv8<br></code></pre></td></tr></table></figure>
+
+<p>当我们随意的在控制台中敲击字符，除去时钟中断的打点输出，我们将看到我们输入的字符。此时说明我们的输入中断是成功运作的。</p>
+<p><img src="https://noionion-picture-bed.oss-cn-hangzhou.aliyuncs.com/blogos-armv8/uartOK.png" srcset="/img/loading.gif" lazyload alt="输入中断完成"></p>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/BlogOS-for-armv8/" class="category-chain-item">BlogOS_for_armv8</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Course/">#Course</a>
+      
+        <a href="/tags/os/">#os</a>
+      
+        <a href="/tags/rust/">#rust</a>
+      
+        <a href="/tags/blogos/">#blogos</a>
+      
+        <a href="/tags/armv8/">#armv8</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>rust写个操作系统——课程实验blogos移至armV8深度解析：实验五 输入</div>
+      <div>https://noionion.top/82ab7cd4.html</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>noionion</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年4月25日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/ec262d5c.html" title="rust写个操作系统——课程实验blogos移至armV8深度解析：实验六 GPIO关机">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">rust写个操作系统——课程实验blogos移至armV8深度解析：实验六 GPIO关机</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/a4c75e16.html" title="rust写个操作系统——课程实验blogos移至armV8深度解析：实验四 中断">
+                        <span class="hidden-mobile">rust写个操作系统——课程实验blogos移至armV8深度解析：实验四 中断</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="twikoo"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/twikoo/1.4.17/twikoo.all.min.js', function() {
+        var options = Object.assign(
+          {"envId":"blog-twikoo-5gjox0si204192ef","region":"ap-shanghai","path":"window.location.pathname"},
+          {
+            el: '#twikoo',
+            path: 'window.location.pathname',
+            onCommentLoaded: function() {
+              var imgSelector = '#twikoo .tk-content img:not(.tk-owo-emotion)';
+              Fluid.plugins.imageCaption(imgSelector);
+              Fluid.plugins.fancyBox(imgSelector);
+            }
+          }
+        )
+        twikoo.init(options)
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.0/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

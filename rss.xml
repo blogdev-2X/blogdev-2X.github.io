@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>贰猹の小窝</title>
+    <link>https://noionion.top/</link>
+    
+    <image>
+      <url>https://noionion.top/icon.png</url>
+      <title>贰猹の小窝</title>
+      <link>https://noionion.top/</link>
+    </image>
+    
+    <atom:link href="https://noionion.top/rss.xml" rel="self" type="application/rss+xml"/>
+    
+    <description>欢迎光临小窝！</description>
+    <pubDate>Sat, 21 May 2022 13:19:00 GMT</pubDate>
+    <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>rust写个操作系统——课程实验blogos移至armV8深度解析：实验七 死锁与简单处理</title>
+      <link>https://noionion.top/b484f477.html</link>
+      <guid>https://noionion.top/b484f477.html</guid>
+      <pubDate>Sat, 14 May 2022 12:01:00 GMT</pubDate>
+      
+      <description>HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（实验七 死锁与简单处理）</description>
+      
+      
+      
+      
+      <category domain="https://noionion.top/categories/BlogOS-for-armv8/">BlogOS_for_armv8</category>
+      
+      
+      <category domain="https://noionion.top/tags/Course/">Course</category>
+      
+      <category domain="https://noionion.top/tags/os/">os</category>
+      
+      <category domain="https://noionion.top/tags/rust/">rust</category>
+      
+      <category domain="https://noionion.top/tags/blogos/">blogos</category>
+      
+      <category domain="https://noionion.top/tags/armv8/">armv8</category>
+      
+      
+      <comments>https://noionion.top/b484f477.html#disqus_thread</comments>
+      
+    </item>
+    
+    <item>
+      <title>rust写个操作系统——课程实验blogos移至armV8深度解析：实验六 GPIO关机</title>
+      <link>https://noionion.top/ec262d5c.html</link>
+      <guid>https://noionion.top/ec262d5c.html</guid>
+      <pubDate>Tue, 26 Apr 2022 12:01:00 GMT</pubDate>
+      
+      <description>HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（实验六 GPIO关机）</description>
+      
+      
+      
+      
+      <category domain="https://noionion.top/categories/BlogOS-for-armv8/">BlogOS_for_armv8</category>
+      
+      
+      <category domain="https://noionion.top/tags/Course/">Course</category>
+      
+      <category domain="https://noionion.top/tags/os/">os</category>
+      
+      <category domain="https://noionion.top/tags/rust/">rust</category>
+      
+      <category domain="https://noionion.top/tags/blogos/">blogos</category>
+      
+      <category domain="https://noionion.top/tags/armv8/">armv8</category>
+      
+      
+      <comments>https://noionion.top/ec262d5c.html#disqus_thread</comments>
+      
+    </item>
+    
+    <item>
+      <title>rust写个操作系统——课程实验blogos移至armV8深度解析：实验五 输入</title>
+      <link>https://noionion.top/82ab7cd4.html</link>
+      <guid>https://noionion.top/82ab7cd4.html</guid>
+      <pubDate>Mon, 25 Apr 2022 12:01:00 GMT</pubDate>
+      
+      <description>HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（实验五 输入）</description>
+      
+      
+      
+      
+      <category domain="https://noionion.top/categories/BlogOS-for-armv8/">BlogOS_for_armv8</category>
+      
+      
+      <category domain="https://noionion.top/tags/Course/">Course</category>
+      
+      <category domain="https://noionion.top/tags/os/">os</category>
+      
+      <category domain="https://noionion.top/tags/rust/">rust</category>
+      
+      <category domain="https://noionion.top/tags/blogos/">blogos</category>
+      
+      <category domain="https://noionion.top/tags/armv8/">armv8</category>
+      
+      
+      <comments>https://noionion.top/82ab7cd4.html#disqus_thread</comments>
+      
+    </item>
+    
+    <item>
+      <title>rust写个操作系统——课程实验blogos移至armV8深度解析：实验四 中断</title>
+      <link>https://noionion.top/a4c75e16.html</link>
+      <guid>https://noionion.top/a4c75e16.html</guid>
+      <pubDate>Sun, 24 Apr 2022 12:01:00 GMT</pubDate>
+      
+      <description>HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（实验四 中断）</description>
+      
+      
+      
+      
+      <category domain="https://noionion.top/categories/BlogOS-for-armv8/">BlogOS_for_armv8</category>
+      
+      
+      <category domain="https://noionion.top/tags/Course/">Course</category>
+      
+      <category domain="https://noionion.top/tags/os/">os</category>
+      
+      <category domain="https://noionion.top/tags/rust/">rust</category>
+      
+      <category domain="https://noionion.top/tags/blogos/">blogos</category>
+      
+      <category domain="https://noionion.top/tags/armv8/">armv8</category>
+      
+      
+      <comments>https://noionion.top/a4c75e16.html#disqus_thread</comments>
+      
+    </item>
+    
+    <item>
+      <title>rust写个操作系统——课程实验blogos移至armV8深度解析：实验二 Hello World</title>
+      <link>https://noionion.top/4735f31b.html</link>
+      <guid>https://noionion.top/4735f31b.html</guid>
+      <pubDate>Tue, 19 Apr 2022 12:01:00 GMT</pubDate>
+      
+      <description>HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（实验二 Hello World）</description>
+      
+      
+      
+      
+      <category domain="https://noionion.top/categories/BlogOS-for-armv8/">BlogOS_for_armv8</category>
+      
+      
+      <category domain="https://noionion.top/tags/Course/">Course</category>
+      
+      <category domain="https://noionion.top/tags/os/">os</category>
+      
+      <category domain="https://noionion.top/tags/rust/">rust</category>
+      
+      <category domain="https://noionion.top/tags/blogos/">blogos</category>
+      
+      <category domain="https://noionion.top/tags/armv8/">armv8</category>
+      
+      
+      <comments>https://noionion.top/4735f31b.html#disqus_thread</comments>
+      
+    </item>
+    
+    <item>
+      <title>rust写个操作系统——课程实验blogos移至armV8深度解析：实验一 环境配置</title>
+      <link>https://noionion.top/adfdff.html</link>
+      <guid>https://noionion.top/adfdff.html</guid>
+      <pubDate>Mon, 18 Apr 2022 12:01:00 GMT</pubDate>
+      
+      <description>HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（实验一 环境配置）</description>
+      
+      
+      
+      
+      <category domain="https://noionion.top/categories/BlogOS-for-armv8/">BlogOS_for_armv8</category>
+      
+      
+      <category domain="https://noionion.top/tags/Course/">Course</category>
+      
+      <category domain="https://noionion.top/tags/os/">os</category>
+      
+      <category domain="https://noionion.top/tags/rust/">rust</category>
+      
+      <category domain="https://noionion.top/tags/blogos/">blogos</category>
+      
+      <category domain="https://noionion.top/tags/armv8/">armv8</category>
+      
+      
+      <comments>https://noionion.top/adfdff.html#disqus_thread</comments>
+      
+    </item>
+    
+    <item>
+      <title>rust写个操作系统——课程实验blogos移至armV8深度解析</title>
+      <link>https://noionion.top/16433.html</link>
+      <guid>https://noionion.top/16433.html</guid>
+      <pubDate>Sun, 17 Apr 2022 12:01:00 GMT</pubDate>
+      
+      <description>HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（目录页与日志页）</description>
+      
+      
+      
+      
+      <category domain="https://noionion.top/categories/BlogOS-for-armv8/">BlogOS_for_armv8</category>
+      
+      
+      <category domain="https://noionion.top/tags/Course/">Course</category>
+      
+      <category domain="https://noionion.top/tags/os/">os</category>
+      
+      <category domain="https://noionion.top/tags/rust/">rust</category>
+      
+      <category domain="https://noionion.top/tags/blogos/">blogos</category>
+      
+      <category domain="https://noionion.top/tags/armv8/">armv8</category>
+      
+      
+      <comments>https://noionion.top/16433.html#disqus_thread</comments>
+      
+    </item>
+    
+  </channel>
+</rss>
