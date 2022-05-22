@@ -16,28 +16,28 @@
   <meta name="author" content="noionion">
   <meta name="keywords" content="">
   
-    <meta name="description" content="HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（目录页与日志页）">
+    <meta name="description" content="一入魔改深似海！这里是猹的魔改日志目录。包含猹每一个博客时期对自己的博客采用的魔改。在这里想说的是：魔改的尽头不应该走向原生，而应该是走向独特，从适合自己开始。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="rust写个操作系统——课程实验blogos移至armV8深度解析">
-<meta property="og:url" content="https://noionion.top/16433.html">
+<meta property="og:title" content="魔改日记本：博客魔改记录总览">
+<meta property="og:url" content="https://noionion.top/a2f03686.html">
 <meta property="og:site_name" content="贰猹の小窝">
-<meta property="og:description" content="HNU 操作系统课程实验：将 blogos 移植到 armv8 架构。blogos 是 Philipp Oppermann 用 rust 语言编写的面向 x86 架构的简单操作系统。这里是作者的实验梳理和整理，也是全网第一篇关于该实验的深度解析。（目录页与日志页）">
+<meta property="og:description" content="一入魔改深似海！这里是猹的魔改日志目录。包含猹每一个博客时期对自己的博客采用的魔改。在这里想说的是：魔改的尽头不应该走向原生，而应该是走向独特，从适合自己开始。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-04-17T12:01:00.000Z">
-<meta property="article:modified_time" content="2022-05-21T13:19:00.000Z">
+<meta property="article:published_time" content="2022-05-22T12:43:07.000Z">
+<meta property="article:modified_time" content="2022-05-22T04:00:00.000Z">
 <meta property="article:author" content="noionion">
 <meta property="article:tag" content="Course">
-<meta property="article:tag" content="os">
-<meta property="article:tag" content="rust">
-<meta property="article:tag" content="blogos">
-<meta property="article:tag" content="armv8">
+<meta property="article:tag" content="Diary">
+<meta property="article:tag" content="魔改">
+<meta property="article:tag" content="butterfly">
+<meta property="article:tag" content="hexo">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>rust写个操作系统——课程实验blogos移至armV8深度解析 - 贰猹の小窝</title>
+  <title>魔改日记本：博客魔改记录总览 - 贰猹の小窝</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -190,7 +190,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="rust写个操作系统——课程实验blogos移至armV8深度解析"></span>
+            <span id="subtitle" data-typed-text="魔改日记本：博客魔改记录总览"></span>
           
         </div>
 
@@ -206,8 +206,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-04-17 20:01" pubdate>
-          2022年4月17日 晚上
+        <time datetime="2022-05-22 20:43" pubdate>
+          2022年5月22日 晚上
         </time>
       </span>
     
@@ -218,7 +218,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.1k 字
+          563 字
         
       </span>
     
@@ -229,7 +229,7 @@
         
         
         
-          10 分钟
+          5 分钟
         
       </span>
     
@@ -275,37 +275,35 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">rust写个操作系统——课程实验blogos移至armV8深度解析</h1>
+            <h1 style="display: none">魔改日记本：博客魔改记录总览</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：14 小时前
+                    本文最后更新于：34 分钟后
                   
                 
               </p>
             
             <div class="markdown-body">
               
-              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>不能不说，我看着实验指导书给好的现成的代码，不知道这些代码到底在干什么。我陷入了沉思，作为一个想学习嵌入式系统的学生而言，我似乎不能从这个实验中学到些什么。</p>
-<p>然而这些知识，理应是一个想做嵌入式的人应该有的，但看着现成代码再看注解，大部分情况下还是一头雾水。老师说理解原理，但又理解不能，于是去翻阅资料。只有一步步实现，才能更好的知道我们为什么要这么做。</p>
-<p>很多的代码细节，我也仍然没办法去一行行解释。面对想学的东西，更多的还是保持求知欲和不厌其烦。</p>
-<p>路漫漫其修远兮，吾将上下而求索，说的莫若如是。</p>
-<div class="note note-primary">
-            <p><strong>仓库地址</strong>：<a target="_blank" rel="noopener" href="https://github.com/2X-ercha/blogOS-armV8">https://github.com/2X-ercha/blogOS-armV8</a>，能不能求一个<code>star</code>呢？</p>
-          </div>
-
-<div class="note note-info">
-            <p><strong>想要速通实验</strong>？请转 <a target="_blank" rel="noopener" href="https://acmezone.top/2022/02/26/BlogOS%EF%BC%9AARM-v8%E4%B9%8B%E6%97%85/">AcmeZone: BlogOS：ARM v8之旅</a></p>
-          </div>
-
-<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><div class="note note-success">
-            <ul><li><p><strong>2022-04-18 实验一完成</strong></p><p>仓库地址：<a target="_blank" rel="noopener" href="https://github.com/2X-ercha/blogOS-armV8/tree/lab1">https://github.com/2X-ercha/blogOS-armV8/tree/lab1</a></p><p>文章地址: <a href="/adfdff.html">https://noionion.top/adfdff.html</a></p></li><li><p><strong>2022-04-19 实验二完成</strong></p><p>仓库地址：<a target="_blank" rel="noopener" href="https://github.com/2X-ercha/blogOS-armV8/tree/lab2">https://github.com/2X-ercha/blogOS-armV8/tree/lab2</a></p><p>文章地址: <a href="/4735f31b.html">https://noionion.top/4735f31b.html</a></p></li><li><p><strong>2022-04-24 实验四完成</strong></p><p>仓库地址：<a target="_blank" rel="noopener" href="https://github.com/2X-ercha/blogOS-armV8/tree/lab4">https://github.com/2X-ercha/blogOS-armV8/tree/lab4</a></p><p>文章地址: <a href="/a4c75e16.html">https://noionion.top/a4c75e16.html</a></p></li><li><p><strong>2022-04-25 实验五完成</strong></p><p>仓库地址：<a target="_blank" rel="noopener" href="https://github.com/2X-ercha/blogOS-armV8/tree/lab5">https://github.com/2X-ercha/blogOS-armV8/tree/lab5</a></p><p>文章地址: <a href="/82ab7cd4.html">https://noionion.top/82ab7cd4.html</a></p></li><li><p><strong>2022-04-26 实验六完成</strong></p><p>仓库地址：<a target="_blank" rel="noopener" href="https://github.com/2X-ercha/blogOS-armV8/tree/lab6">https://github.com/2X-ercha/blogOS-armV8/tree/lab6</a></p><p>文章地址: <a href="/ec262d5c.html">https://noionion.top/ec262d5c.html</a></p></li><li><p><strong>2022-05-14 实验七完成</strong></p><p>仓库地址：<a target="_blank" rel="noopener" href="https://github.com/2X-ercha/blogOS-armV8/tree/lab7">https://github.com/2X-ercha/blogOS-armV8/tree/lab7</a></p><p>文章地址: <a href="/b484f477.html">https://noionion.top/b484f477.html</a></p></li></ul>
-          </div>
-
-<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><div class="note note-danger">
-            <ul><li><p><strong>2022-05-13 详解勘误并修改</strong></p><p>跟老师探讨后，发现前六个实验有一部分发生较大的理解错误。在此进行一次勘误。主要勘误部分有：</p><ul><li><p>panic的作用 <a href="/adfdff.html#%E8%83%BD%E8%B7%91%E8%B5%B7%E6%9D%A5%E7%9A%84%E8%A3%B8%E6%9C%BA%E7%A8%8B%E5%BA%8F%E5%B0%9D%E8%AF%95">（定位到勘误点）</a></p></li><li><p>程序维持执行的<code>loop</code>和汇编<code>wfi</code>的作用 <a href="/a4c75e16.html#%E6%97%B6%E9%92%9F%E4%B8%AD%E6%96%AD%E6%9C%8D%E5%8A%A1">（定位到勘误点）</a></p></li><li><p>最小化内核构建中的部分错误</p></li></ul></li></ul>
-          </div>
+              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>有人说，魔改的尽头是原生。我觉得这个理解是完全错误的。主题是别人写的，魔改是为了自己更喜欢。<strong>魔改的尽头不应该走向原生，而应该是走向独特，从适合自己开始。</strong></p>
+<h2 id="第一版魔改稿"><a href="#第一版魔改稿" class="headerlink" title="第一版魔改稿"></a>第一版魔改稿</h2><p>这个时期的猹刚开始玩博客，自然对前端一无所知。看着小康的魔改入门帖进入了魔改的新天地，开始稍微了解了点前端。后来在糖果屋和小冰老师那看到了更多喜欢的魔改，也用了许多。</p>
+<p>这一版的特点：一图流，背景透明，初看很不错，但阅读受限。</p>
+<p>文章记录点：</p>
+<ol>
+<li><a href="/10567.html">我的butterfly魔改记录</a></li>
+</ol>
+<h2 id="第二版魔改稿"><a href="#第二版魔改稿" class="headerlink" title="第二版魔改稿"></a>第二版魔改稿</h2><p>这一版充其量算个临时用用的，但也基本都是自己的魔改。比较显著的是顶栏和侧边菜单栏、右下角作者卡片小彩蛋、独特了一点点的文章页设计，有了猹自己的设计理念。当我逐渐把观赏性注意力投入到阅读体验上时，我发现博客有许多不必要的侧栏可以通通去掉，只留下有用的作者卡片和目录。现在才算开始把博客走向正轨吧。</p>
+<p>这一版的特点：单栏，渐变色背景，独特菜单栏和小菜单设计</p>
+<p>文章记录点：</p>
+<ol>
+<li><p><a href="/12280.html">魔改日记本-菜单栏（推荐：有个人认为很不错的设计）</a></p>
+</li>
+<li><p><a href="/40244.html">魔改日记本-小菜单</a></p>
+</li>
+</ol>
+<h2 id="第三版魔改稿"><a href="#第三版魔改稿" class="headerlink" title="第三版魔改稿"></a>第三版魔改稿</h2><p>当我发现<code>fluid</code>主题太契合自己的设计理念的时候，犹豫了许久（舍不得之前的魔改）终究还是换了。但是仍旧有我不喜欢的地方，比如移动端的菜单栏我更喜欢自己在<code>butterfly</code>的魔改设计。之后也会开始尝试魔改吧（毕竟还没接触过<code>ejs</code>，上手需要时间）</p>
 
               
             </div>
@@ -323,7 +321,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/BlogOS-for-armv8/" class="category-chain-item">BlogOS_for_armv8</a>
+  <a href="/categories/%E9%AD%94%E6%94%B9/" class="category-chain-item">魔改</a>
   
   
 
@@ -340,13 +338,13 @@
       
         <a href="/tags/Course/">#Course</a>
       
-        <a href="/tags/os/">#os</a>
+        <a href="/tags/Diary/">#Diary</a>
       
-        <a href="/tags/rust/">#rust</a>
+        <a href="/tags/%E9%AD%94%E6%94%B9/">#魔改</a>
       
-        <a href="/tags/blogos/">#blogos</a>
+        <a href="/tags/butterfly/">#butterfly</a>
       
-        <a href="/tags/armv8/">#armv8</a>
+        <a href="/tags/hexo/">#hexo</a>
       
     </div>
   
@@ -358,8 +356,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>rust写个操作系统——课程实验blogos移至armV8深度解析</div>
-      <div>https://noionion.top/16433.html</div>
+      <div>魔改日记本：博客魔改记录总览</div>
+      <div>https://noionion.top/a2f03686.html</div>
     </div>
     <div class="license-meta">
       
@@ -371,7 +369,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年4月17日</div>
+          <div>2022年5月22日</div>
         </div>
       
       
@@ -401,18 +399,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/adfdff.html" title="rust写个操作系统——课程实验blogos移至armV8深度解析：实验一 环境配置">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">rust写个操作系统——课程实验blogos移至armV8深度解析：实验一 环境配置</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/40244.html" title="魔改日记本-小菜单和复制/F12提示栏">
-                        <span class="hidden-mobile">魔改日记本-小菜单和复制/F12提示栏</span>
+                      <a href="/b484f477.html" title="rust写个操作系统——课程实验blogos移至armV8深度解析：实验七 死锁与简单处理">
+                        <span class="hidden-mobile">rust写个操作系统——课程实验blogos移至armV8深度解析：实验七 死锁与简单处理</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

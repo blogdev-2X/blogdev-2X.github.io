@@ -6,7 +6,7 @@
   <link href="https://noionion.top/atom.xml" rel="self"/>
   
   <link href="https://noionion.top/"/>
-  <updated>2022-05-21T13:19:00.000Z</updated>
+  <updated>2022-05-22T04:00:00.000Z</updated>
   <id>https://noionion.top/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>魔改日记本：博客魔改记录总览</title>
+    <link href="https://noionion.top/a2f03686.html"/>
+    <id>https://noionion.top/a2f03686.html</id>
+    <published>2022-05-22T12:43:07.000Z</published>
+    <updated>2022-05-22T04:00:00.000Z</updated>
+    
+    
+    <summary type="html">一入魔改深似海！这里是猹的魔改日志目录。包含猹每一个博客时期对自己的博客采用的魔改。在这里想说的是：魔改的尽头不应该走向原生，而应该是走向独特，从适合自己开始。</summary>
+    
+    
+    
+    <category term="魔改" scheme="https://noionion.top/categories/%E9%AD%94%E6%94%B9/"/>
+    
+    
+    <category term="Course" scheme="https://noionion.top/tags/Course/"/>
+    
+    <category term="Diary" scheme="https://noionion.top/tags/Diary/"/>
+    
+    <category term="魔改" scheme="https://noionion.top/tags/%E9%AD%94%E6%94%B9/"/>
+    
+    <category term="butterfly" scheme="https://noionion.top/tags/butterfly/"/>
+    
+    <category term="hexo" scheme="https://noionion.top/tags/hexo/"/>
+    
+  </entry>
   
   <entry>
     <title>rust写个操作系统——课程实验blogos移至armV8深度解析：实验七 死锁与简单处理</title>
@@ -202,6 +229,87 @@
     <category term="blogos" scheme="https://noionion.top/tags/blogos/"/>
     
     <category term="armv8" scheme="https://noionion.top/tags/armv8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>魔改日记本-小菜单和复制/F12提示栏</title>
+    <link href="https://noionion.top/40244.html"/>
+    <id>https://noionion.top/40244.html</id>
+    <published>2021-11-30T13:00:00.000Z</published>
+    <updated>2021-11-30T13:00:00.000Z</updated>
+    
+    
+    <summary type="html">猹的一点点对博客的设计理念实现：侧边栏干扰阅读的通通滚开，只留下有用的作者卡片和目录（放小菜单吧）</summary>
+    
+    
+    
+    <category term="魔改" scheme="https://noionion.top/categories/%E9%AD%94%E6%94%B9/"/>
+    
+    
+    <category term="Course" scheme="https://noionion.top/tags/Course/"/>
+    
+    <category term="Diary" scheme="https://noionion.top/tags/Diary/"/>
+    
+    <category term="魔改" scheme="https://noionion.top/tags/%E9%AD%94%E6%94%B9/"/>
+    
+    <category term="butterfly" scheme="https://noionion.top/tags/butterfly/"/>
+    
+    <category term="hexo" scheme="https://noionion.top/tags/hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>魔改日记本-菜单栏及移动端侧边菜单栏的魔改</title>
+    <link href="https://noionion.top/12280.html"/>
+    <id>https://noionion.top/12280.html</id>
+    <published>2021-08-20T16:00:00.000Z</published>
+    <updated>2021-08-21T16:30:00.000Z</updated>
+    
+    
+    <summary type="html">猹的一点点对博客的设计理念实现：开始试着自己魔改，菜单栏居中设计和移动端更合适的侧边菜单栏布局理念</summary>
+    
+    
+    
+    <category term="魔改" scheme="https://noionion.top/categories/%E9%AD%94%E6%94%B9/"/>
+    
+    
+    <category term="Course" scheme="https://noionion.top/tags/Course/"/>
+    
+    <category term="Diary" scheme="https://noionion.top/tags/Diary/"/>
+    
+    <category term="魔改" scheme="https://noionion.top/tags/%E9%AD%94%E6%94%B9/"/>
+    
+    <category term="butterfly" scheme="https://noionion.top/tags/butterfly/"/>
+    
+    <category term="hexo" scheme="https://noionion.top/tags/hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>魔改日记本: 我的初版butterfly魔改记录</title>
+    <link href="https://noionion.top/10567.html"/>
+    <id>https://noionion.top/10567.html</id>
+    <published>2021-02-20T12:43:07.000Z</published>
+    <updated>2022-05-22T02:49:33.614Z</updated>
+    
+    
+    <summary type="html">一入魔改深似海！</summary>
+    
+    
+    
+    <category term="魔改" scheme="https://noionion.top/categories/%E9%AD%94%E6%94%B9/"/>
+    
+    
+    <category term="Course" scheme="https://noionion.top/tags/Course/"/>
+    
+    <category term="Diary" scheme="https://noionion.top/tags/Diary/"/>
+    
+    <category term="魔改" scheme="https://noionion.top/tags/%E9%AD%94%E6%94%B9/"/>
+    
+    <category term="butterfly" scheme="https://noionion.top/tags/butterfly/"/>
+    
+    <category term="hexo" scheme="https://noionion.top/tags/hexo/"/>
     
   </entry>
   
